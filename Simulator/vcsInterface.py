@@ -117,7 +117,9 @@ class vcsInterface(simulatorInterface):
         """
         Returns vcs compile executable cmd
         """
-        return 'vcs'
+        #return 'vcs'
+        #Workaround for gcc compile option
+        return 'vcs -cpp g++ -cc gcc -LDFLAGS -Wl,--no-as-needed'
 
     def simExe(self):
         """
