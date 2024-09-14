@@ -20,8 +20,8 @@ class waveArgsAction(argparse.Action):
     """
     '-wave' argument Action callback subclass
     FIXME: because i used VCS version: vcs script version : I-2014.03
-    which is not support '-lca' option, and if you want to dump fsdb waveform, 
-    you must have -fsdb and -debug_pp option.  but if you new version, 
+    which is not support '-lca' option, and if you want to dump fsdb waveform,
+    you must have -fsdb and -debug_pp option.  but if you new version,
     -debug_pp is deprecated. so you can set -debug_access+pp
     and $VERDI_HOME env var for fsdb dump
     """
@@ -38,7 +38,7 @@ class waveArgsAction(argparse.Action):
 class covArgsAction(argparse.Action):
     """
     '-cov' argument Action callback subclass
-    """    
+    """
     def __call__(self, parser, args, values, option = None):
         args.cov = values
         #TODO: Add -cm_dir and -cm_name options
@@ -54,7 +54,7 @@ class covArgsAction(argparse.Action):
 class seedArgsAction(argparse.Action):
     """
     '-seed' argument Action callback subclass
-    """     
+    """
     def __call__(self, parser, args, values, option = None):
         args.seed = values
         if args.seed == 0:
@@ -65,13 +65,13 @@ class seedArgsAction(argparse.Action):
 class testArgsAction(argparse.Action):
     """
     '-t' argument Action callback subclass
-    """      
+    """
     def __call__(self, parser, args, values, option = None):
         args.test = values
         if args.test:
             appendAttr(args, 'simOption', '+UVM_TESTNAME=%s' % args.test)
 
-class vcsInterface(simulatorInterface): 
+class vcsInterface(simulatorInterface):
     """
     Interface for the Synopsys VCS MX simulator
     """
@@ -119,7 +119,8 @@ class vcsInterface(simulatorInterface):
         """
         #return 'vcs'
         #Workaround for gcc compile option
-        return 'vcs -cpp g++ -cc gcc -LDFLAGS -Wl,--no-as-needed'
+        #return 'vcs -cpp g++ -cc gcc -LDFLAGS -Wl,--no-as-needed'
+        return 'vcs -cpp g++-4.8 -cc gcc-4.8 -LDFLAGS -Wl,--no-as-needed -full64'
 
     def simExe(self):
         """
@@ -137,15 +138,15 @@ class vcsInterface(simulatorInterface):
 class vcsSimCheck(simCheck):
     """
     VCS specified simulation results checker
-    """    
-    vcsErrorPattern = r'^Error-\[.*\]'    
+    """
+    vcsErrorPattern = r'^Error-\[.*\]'
     coreDumpPattern = r'Completed context dump phase'
     simEndPattern = r'V C S   S i m u l a t i o n   R e p o r t'
     timingViolationPattern = r'.*Timing violation.*'
 
     def __init__(self):
         super(vcsSimCheck, self).__init__()
-        self._simEndPattern = re.compile(vcsSimCheck.simEndPattern)        
+        self._simEndPattern = re.compile(vcsSimCheck.simEndPattern)
         self.setExcludeWarnPatterns(vcsSimCheck.vcsErrorPattern)
         self.setErrPatterns(vcsSimCheck.coreDumpPattern)
         self.setWarnPatterns(vcsSimCheck.timingViolationPattern)
