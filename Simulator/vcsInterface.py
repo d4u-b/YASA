@@ -119,8 +119,8 @@ class vcsInterface(simulatorInterface):
         """
         #return 'vcs'
         #Workaround for gcc compile option
-        #return 'vcs -cpp g++ -cc gcc -LDFLAGS -Wl,--no-as-needed'
-        return 'vcs -cpp g++-4.8 -cc gcc-4.8 -LDFLAGS -Wl,--no-as-needed -full64'
+        return 'vcs -cpp g++ -cc gcc -LDFLAGS -Wl,--no-as-needed'
+        #return 'vcs -cpp g++-4.8 -cc gcc-4.8 -LDFLAGS -Wl,--no-as-needed -full64'
 
     def simExe(self):
         """
