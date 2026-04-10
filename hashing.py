@@ -28,4 +28,4 @@ def hash_string(string):
     """
     returns hash of bytes
     """
-    return hashlib.sha1(string.encode(encoding="utf-8")).hexdigest()
+    return hashlib.sha256(string.encode(encoding="utf-8")).hexdigest()

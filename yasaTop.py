@@ -99,7 +99,7 @@ class yasaTop(object):
             create_new = (key not in database) or (database[key] != version)
         except KeyboardInterrupt:
             raise KeyboardInterrupt
-        except:  # pylint: disable=bare-except
+        except Exception:  # pylint: disable=broad-except
             traceback.print_exc()
             create_new = True
 
@@ -133,7 +133,7 @@ class yasaTop(object):
             sys.exit(1)
         except SystemExit as e:
             sys.exit(e.code)
-        except: 
+        except Exception:
             if self._args.dont_catch_exceptions:
                 raise
             traceback.print_exc()

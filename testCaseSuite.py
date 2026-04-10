@@ -17,6 +17,7 @@
 # *******************************************************************************
 import os
 import sys
+import importlib.util
 import ostools
 from test_report import (PASSED, WARNED, FAILED)
 from globals import *
@@ -126,9 +127,10 @@ class TestRun(object):
 
         (userSimCheckFunc, userSimCheckFile) = userSimCheck()
         if userSimCheckFile:
-            sys.path.append(os.path.dirname(userSimCheckFile))
-            from userSimCheck import userSimCheck as simCheck
-            checker=simCheck()
+            spec = importlib.util.spec_from_file_location("userSimCheck", userSimCheckFile)
+            user_check_mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(user_check_mod)
+            checker = user_check_mod.userSimCheck()
         else:
             checker= self._simulator_if.simCheck
         #elif self._simulator_if.name =='vcs':
