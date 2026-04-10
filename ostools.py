@@ -128,7 +128,7 @@ class Process(object):
             # Create new process group on POSIX, setpgrp does not exist on Windows
             #preexec_fn=os.setsid)
             preexec_fn=os.setpgrp)  # pylint: disable=no-member
-        LOGGER.debug("Started process with pid=%i: '%s'", self._process.pid, (" ".join(self._cwd)))
+        LOGGER.debug("Started process with pid=%i: '%s'", self._process.pid, self._cwd)
 
         self._queue = InterruptableQueue()
         self._reader = AsynchronousFileReader(self._process.stdout, self._queue)

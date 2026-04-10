@@ -57,18 +57,11 @@ def defaultTestDir():
         return os.path.join(os.environ['PRJ_HOME'], 'testcases')
 
 
-def defaultWorkDir():
-    if 'WORK_DIR' in os.environ:
-        return os.environ['WORK_DIR']
-    else:
-        return os.path.join(defaultWorkPrjDir(), 'work')
-
-
 def defaultReportDir():
     if 'REPORT_DIR' in os.environ:
         return os.environ['REPORT_DIR']
     else:
-        return os.path.join(defaultWorkPrjDir(), 'report')
+        return os.path.join(defaultWorkDir(), 'report')
 
 def userSimCheck():
     userSimCheckFile = os.path.join(os.environ['PRJ_HOME'], 'bin', os.environ['YASA_SIMULATOR']+'_cfg', 'userSimCheck.py')
