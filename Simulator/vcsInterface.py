@@ -13,7 +13,7 @@ from .simCheck import *
 
 LOGGER = logging.getLogger(__name__)
 import sys
-sys.path.append("../")
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)))
 from globals import *
 
 class waveArgsAction(argparse.Action):

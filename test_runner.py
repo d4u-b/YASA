@@ -211,7 +211,7 @@ class TestRunner(object):
         except KeyboardInterrupt:
             self._add_skipped_tests(test_suite, results, start_time, num_tests, test_suite.test_result_file)
             raise KeyboardInterrupt
-        except:
+        except Exception:
             if self._dont_catch_exceptions:
                 raise
 

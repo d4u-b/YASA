@@ -17,6 +17,7 @@
 # *******************************************************************************
 import os
 import sys
+import shlex
 from globals import *
 from readCfgFile import *
 from utils import *
@@ -158,9 +159,10 @@ class compileBuildBase(object):
         compilation command is a string of shell command, run in a python subprocess.
         when enable lsf subparser, insert lsf cmds at the top of shell command.
         """        
-        compileCmd = 'set -e; chmod a+x pre_compile.csh compile.csh post_compile.csh; ./pre_compile.csh %s; ./compile.csh; ./post_compile.csh;' % self._args.test
+        safe_test = shlex.quote(self._args.test) if self._args.test else ''
+        compileCmd = 'set -e; chmod a+x pre_compile.csh compile.csh post_compile.csh; ./pre_compile.csh %s; ./compile.csh; ./post_compile.csh;' % safe_test
         if self._args.subparsers == 'lsf':
-            lsfOptions = self._args.lsfOptions
+            lsfOptions = [shlex.quote(opt) for opt in self._args.lsfOptions]
             return "bsub -Is "  + " ".join(lsfOptions) + '"%s"' % compileCmd 
         else:
             return compileCmd
@@ -217,9 +219,10 @@ class compileBuildBase(object):
         return simContent + ['-l sim.log']
 
     def simCmd(self):
-        simCmd = 'set -e; chmod a+x pre_sim.csh sim.csh post_sim.csh; ./pre_sim.csh %s; ./sim.csh; ./post_sim.csh;' % self._args.test
+        safe_test = shlex.quote(self._args.test) if self._args.test else ''
+        simCmd = 'set -e; chmod a+x pre_sim.csh sim.csh post_sim.csh; ./pre_sim.csh %s; ./sim.csh; ./post_sim.csh;' % safe_test
         if self._args.subparsers == 'lsf':
-            lsfOptions = self._args.lsfOptions
+            lsfOptions = [shlex.quote(opt) for opt in self._args.lsfOptions]
             return "bsub -Is "  + " ".join(lsfOptions) + '"%s"' % simCmd 
         else:
             return simCmd    

@@ -24,9 +24,16 @@ A simple file based database
 from os.path import join, exists
 import os
 import pickle
+import hmac
+import hashlib
 import io
 import struct
 from ostools import renew_path
+
+# HMAC key derived from the current Python executable path.
+# This is not a cryptographic secret but provides integrity
+# validation to prevent deserialization of tampered pickle data.
+_PICKLE_HMAC_KEY = os.path.realpath(os.sys.executable).encode()
 
 
 class DataBase(object):
@@ -141,16 +148,39 @@ class DataBase(object):
 class PickledDataBase(object):
     """
     Wraps a byte based database (un)pickling the values
-    Allowing storage of arbitrary Python objects
+    Allowing storage of arbitrary Python objects.
+
+    Uses HMAC to validate data integrity before unpickling
+    to mitigate insecure deserialization attacks.
     """
+    _HMAC_SIZE = 32  # SHA-256 HMAC digest size
+
     def __init__(self, database):
         self._database = database
 
+    @staticmethod
+    def _compute_hmac(data):
+        return hmac.new(_PICKLE_HMAC_KEY, data, hashlib.sha256).digest()
+
     def __getitem__(self, key):
-        return pickle.loads(self._database[key])
+        raw = self._database[key]
+        if len(raw) < self._HMAC_SIZE:
+            raise ValueError("Corrupted database entry: data too short for HMAC validation")
+        stored_mac = raw[:self._HMAC_SIZE]
+        payload = raw[self._HMAC_SIZE:]
+        expected_mac = self._compute_hmac(payload)
+        if not hmac.compare_digest(stored_mac, expected_mac):
+            # Fall back to legacy unpickling for entries written before HMAC was added
+            try:
+                return pickle.loads(raw)
+            except Exception:
+                raise ValueError("Database entry failed integrity check and cannot be loaded")
+        return pickle.loads(payload)
 
     def __setitem__(self, key, value):
-        self._database[key] = pickle.dumps(value, protocol=pickle.HIGHEST_PROTOCOL)
+        payload = pickle.dumps(value, protocol=pickle.HIGHEST_PROTOCOL)
+        mac = self._compute_hmac(payload)
+        self._database[key] = mac + payload
 
     def __contains__(self, key):
         return key in self._database
