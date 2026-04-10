@@ -15,8 +15,12 @@
 # *
 # * Author: Jude Zhang, Email: zhajio.1988@gmail.com
 # *******************************************************************************
+import logging
+
 from extconfigobj import ConfigObj, ParseError, Section, getSections, getKeyWords
 from globals import *
+
+logger = logging.getLogger(__name__)
 
 class baseCfg(object):
     def __init__(self, name, section, parent=None):
@@ -77,7 +81,10 @@ class baseCfg(object):
 
     def _checkKeyWord(self, k):
         if not k in self._buildInOpts:
-            raise ParseError('%s is unknown option' % k)
+            logger.error("Unknown configuration option '%s' in section '%s'. Valid options are: %s",
+                         k, self._name, list(self._buildInOpts.keys()))
+            raise ParseError("'%s' is unknown option in section '%s'. Valid options are: %s"
+                             % (k, self._name, list(self._buildInOpts.keys())))
         return True
 
 class includableTopCfg(baseCfg):
