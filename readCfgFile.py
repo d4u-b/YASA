@@ -98,7 +98,7 @@ class readGroupCfgFile(readCfgFileBase):
 
     @property
     def allBuild(self):
-        return list(set(self._allBuild))
+        return list(dict.fromkeys(self._allBuild))
 
     def getTests(self, groupName):
         groupSection = self.testGroup.getGroup(groupName)

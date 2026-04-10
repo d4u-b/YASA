@@ -40,8 +40,14 @@ class TestReport(object):
         self._filePath = filePath
         self._real_total_time = 0.0
         self._expected_num_tests = 0
-        self.fp = open(os.path.join(self._filePath, "test_status.hud"), "w+", encoding="utf-8")
+        self._hudFilePath = os.path.join(self._filePath, "test_status.hud")
+        self.fp = open(self._hudFilePath, "w+", encoding="utf-8")
         self.fp.write("HVP metric = test\n")
+
+    def __del__(self):
+        """Ensure file handle is closed even if print_str is not called"""
+        if hasattr(self, 'fp') and self.fp and not self.fp.closed:
+            self.fp.close()
 
     def set_real_total_time(self, real_total_time):
         """

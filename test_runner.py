@@ -350,7 +350,7 @@ class TestScheduler(object):
         """
         Iterator in Python 3
         """
-        return self.__next__()
+        return self.next()
 
     def next(self):
         """

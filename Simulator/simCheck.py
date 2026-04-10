@@ -73,5 +73,5 @@ class simCheck(object):
             if endFlagPattern.match(string) :
                 self._endFlagHit = True
     
-        if self._simEndPattern.match(string):
+        if self._simEndPattern is not None and self._simEndPattern.match(string):
             return True

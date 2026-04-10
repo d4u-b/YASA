@@ -76,9 +76,10 @@ class testList(flowList):
 
     def _getTestList(self):
         for dirpath, dirname, filename in os.walk(self._testDir, topdown=True, followlinks=True):
+            dirname.sort()
             if '.svn' in dirname:
                 dirname.remove('.svn')
-            for file in filename:
+            for file in sorted(filename):
                 basename, extname = os.path.splitext(file)
                 if extname == '.sv' and basename == os.path.basename(dirpath):
                     self._testlist[basename] = dirpath
