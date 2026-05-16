@@ -177,6 +177,9 @@ def run_command(command, cwd=None, timeout=1800):
         pass
     except KeyboardInterrupt:
         t.cancel()        
+        print()
+        print("Caught Ctrl-C, requesting graceful simulator shutdown...")
+        proc.interrupt()
         raise
     return False
 

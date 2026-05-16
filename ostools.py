@@ -241,6 +241,26 @@ class Process(object):
         self._process.stdout.close()
         self._process.stdin.close()
 
+    def interrupt(self, timeout_s=5.0):
+        """
+        Try to gracefully interrupt the process group (Ctrl-C semantics)
+        before falling back to forceful termination.
+        """
+        if self._process.poll() is not None:
+            return
+
+        try:
+            os.killpg(os.getpgid(self._process.pid), signal.SIGINT)
+        except (OSError, ProcessLookupError):
+            return
+
+        deadline = time.time() + timeout_s
+        while self._process.poll() is None and time.time() < deadline:
+            time.sleep(0.05)
+
+        if self._process.poll() is None:
+            self.terminate()
+
     def __del__(self):
         try:
             self.terminate()
