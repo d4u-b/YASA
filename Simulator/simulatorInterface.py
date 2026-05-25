@@ -176,10 +176,13 @@ def run_command(command, cwd=None, timeout=1800):
         t.cancel()        
         pass
     except KeyboardInterrupt:
-        t.cancel()        
+        t.cancel()
         print()
         print("Caught Ctrl-C, requesting graceful simulator shutdown...")
-        proc.interrupt()
+        print("Sending SIGINT to simulator and issuing 'exit' for safe waveform flush...")
+        proc.interrupt(timeout_s=2.0, force=False)
+        proc.writeline("exit")
+        proc.wait()
         raise
     return False
 

@@ -241,7 +241,7 @@ class Process(object):
         self._process.stdout.close()
         self._process.stdin.close()
 
-    def interrupt(self, timeout_s=5.0):
+    def interrupt(self, timeout_s=5.0, force=True):
         """
         Try to gracefully interrupt the process group (Ctrl-C semantics)
         before falling back to forceful termination.
@@ -258,7 +258,7 @@ class Process(object):
         while self._process.poll() is None and time.time() < deadline:
             time.sleep(0.05)
 
-        if self._process.poll() is None:
+        if force and self._process.poll() is None:
             self.terminate()
 
     def __del__(self):
